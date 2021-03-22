@@ -13,7 +13,7 @@ class Autor(models.Model):
         return (self.nombre + ' ' +self.apellido)
 
     class Meta:
-        ordering = ['nombre']
+        ordering = ['id']
         verbose_name='Autor'
         verbose_name_plural='Autores'
 
