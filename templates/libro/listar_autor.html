@@ -17,9 +17,8 @@
                       <tr>
                         <th>ID</th>
                         <th>Nombres</th>
-                        <th>Apellidos</th>
+                        <th>Apellido</th>
                         <th>Nacionalidad</th>
-                        <th>Descripcion</th>
                         <th>Opciones</th>
                       </tr>
                   </thead>
@@ -28,9 +27,8 @@
                       <tr>
                         <td>{{ autor.id }}</td>
                         <td>{{ autor.nombre }}</td>
-                        <td>{{ autor.apellidos }}</td>
+                        <td>{{ autor.apellido }}</td>
                         <td>{{ autor.nacionalidad }}</td>
-                        <td>{{ autor.descripcion }}</td>
                         <td>
                           <a href="{% url 'libro:editar_autor' autor.id %}" class="btn btn-primary">Editar</a>
                           <a href="{% url 'libro:eliminar_autor' autor.id %}" class="btn btn-danger">Eliminar</a>

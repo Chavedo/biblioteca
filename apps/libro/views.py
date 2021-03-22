@@ -12,6 +12,7 @@ class Inicio(TemplateView):
 class ListadoAutor(ListView):
     model = Autor
     template_name = 'libro/listar_autor.html'
+    context_object_name = 'autores'
     queryset = Autor.objects.filter(estado = True)
  
 
