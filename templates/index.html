@@ -38,8 +38,8 @@
                     <li class="menu-item-has-children dropdown">
                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-book"></i>Libros</a>
                        <ul class="sub-menu children dropdown-menu">
-                           <li><i class="fa fa-pencil"></i><a href="tables-basic.html">Registro de Libros</a></li>
-                           <li><i class="fa fa-table"></i><a href="tables-data.html">Listado de Libros</a></li>
+                           <li><i class="fa fa-pencil"></i><a href="{% url 'libro:crear_libro' %}">Registro de Libros</a></li>
+                           <li><i class="fa fa-table"></i><a href="{% url 'libro:listado_libros' %}">Listado de Libros</a></li>
                        </ul>
                     </li>
                 </ul>
@@ -53,8 +53,8 @@
         <header id="header" class="header">
             <div class="top-left">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="./"><img src="{% static 'images/logo.png' %}" alt="Logo"></a>
-                    <a class="navbar-brand hidden" href="./"><img src="{% static 'images/logo.png' %}" alt="Logo"></a>
+                    <a class="navbar-brand" href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="Logo"></a>
+                    <a class="navbar-brand hidden" href="{% url 'index' %}"><img src="{% static 'images/logo.png' %}" alt="Logo"></a>
                     <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
                 </div>
             </div>
@@ -101,10 +101,10 @@
             <div class="footer-inner bg-white">
                 <div class="row">
                     <div class="col-sm-6">
-                        Copyright &copy; 2018 Ela Admin
+                        Copyright &copy; 2021 Ela Admin
                     </div>
                     <div class="col-sm-6 text-right">
-                        Designed by <a href="https://colorlib.com">Colorlib</a>
+                        Designed by <a href="https://colorlib.com">Chavedo</a>
                     </div>
                 </div>
             </div>
