@@ -16,6 +16,7 @@ class ListadoAutor(ListView):
     context_object_name = 'autores'
     queryset = Autor.objects.filter(estado=True)
 
+    
 
 class AcualizarAutor(UpdateView):
     model = Autor
