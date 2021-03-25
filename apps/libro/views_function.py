@@ -3,6 +3,13 @@ from django.shortcuts import redirect, render
 from .forms import AutorForm
 from .models import Autor
 
+"""
+
+Function-based views, not used, were replaced by
+Class-based views.
+
+"""
+
 def crear_autor(request):
     # USANDO FORM.PY
     if request.method == 'POST':

@@ -57,6 +57,6 @@ class LibroForm(forms.ModelForm):
                 }
             ),
             'fecha_publicacion': forms.SelectDateWidget(
-                years=range(1800,2022)
+                years=range(1800,2022) #Non-defined range (current - current + 9)
             )
         }

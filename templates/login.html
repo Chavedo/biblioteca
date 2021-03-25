@@ -35,12 +35,13 @@
                     <form method="POST">
                         {% csrf_token %}
                         <div class="form-group">
-                            {% if form.error_messages %}
+                            {% if form.errors %}
                             <div class="aler alert-danger alert-dismissable" role="alert">
                                 <button type="button" class="close" data-dismiss='alert' aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
-                                <strong>Advertencia:</strong> {{form.get_invalid_login_error}}
+                                <strong>Error:</strong> El usuario y/o contraseña no son validos, por favor ingrese
+                                campos validos.
                             </div>
                             {% endif %}
 

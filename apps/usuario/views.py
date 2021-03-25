@@ -13,8 +13,8 @@ class Login(FormView):
     form_class = FormularioLogin
     success_url = reverse_lazy('index')
 
-    @method_decorator(csrf_protect)
-    @method_decorator(never_cache)
+    @method_decorator(csrf_protect) #adds CSRF protection,it can be used on a per view basis
+    @method_decorator(never_cache) #adds headers to a response so that it will never be cached
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return HttpResponseRedirect(self.get_success_url())
