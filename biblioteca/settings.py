@@ -106,6 +106,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#Override the default user model by providing a value 
+#for the AUTH_USER_MODEL setting that references a custom model
+
+AUTH_USER_MODEL = 'usuario.Usuario'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
