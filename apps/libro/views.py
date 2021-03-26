@@ -14,27 +14,6 @@ class Inicio(TemplateView):
     template_name = "index.html"
 
 
-class ListadoAutor(ListView):
-    """
-    Render some list of objects, set by `self.model` or `self.queryset`.
-    `self.queryset` can actually be any iterable of items, not just a queryset.
-    """
-    model = Autor
-    template_name = 'libro/autor/listar_autor.html'
-    context_object_name = 'autores'
-    queryset = Autor.objects.filter(estado=True)
-
-
-class ActualizarAutor(UpdateView):
-    """
-    View for updating an object, with a response rendered by a template.
-    """
-    model = Autor
-    template_name = "libro/autor/crear_autor.html"
-    form_class = AutorForm
-    success_url = reverse_lazy('autor:listar_autor')
-
-
 class CrearAutor(CreateView):
     """
     View for creating a new object, with a response rendered by a template.
@@ -42,7 +21,40 @@ class CrearAutor(CreateView):
     model = Autor
     form_class = AutorForm
     template_name = 'libro/autor/crear_autor.html'
-    success_url = reverse_lazy('autor:listar_autor')
+    success_url = reverse_lazy('libro:listar_autor')
+
+
+class ListadoAutor(View):
+    """
+    Render some list of objects, set by `self.model` or `self.queryset`.
+    `self.queryset` can actually be any iterable of items, not just a queryset.
+    """
+    model = Autor
+    form_class = AutorForm
+    template_name = 'libro/autor/listar_autor.html'
+
+    def get_queryset(self):
+
+        return self.model.objects.filter(estado=True)
+
+    def get_context_data(self):
+        context = {}
+        context['autores'] = self.get_queryset()
+        context['form'] = self.form_class
+        return context
+
+    def get(self, request):
+        return render(request, self.template_name, self.get_context_data())
+
+
+class ActualizarAutor(UpdateView):
+    """
+    View for updating an object, with a response rendered by a template.
+    """
+    model = Autor
+    template_name = "libro/autor/autor.html"
+    form_class = AutorForm
+    success_url = reverse_lazy('libro:listar_autor')
 
 
 class EliminarAutor(DeleteView):
@@ -59,11 +71,12 @@ class EliminarAutor(DeleteView):
 
 
 class CrearLibro(CreateView):
-    #create book
+    # create book
     model = Libro
     form_class = LibroForm
     template_name = 'libro/libro/crear_libro.html'
     success_url = reverse_lazy('libro:listado_libros')
+
 
 class ListadoLibros(View):
     """
@@ -108,7 +121,7 @@ class EliminarLibro(DeleteView):
     model = Libro
 
     def post(pk):
-        object = Libro.objects.get(id=pk) # primary key
+        object = Libro.objects.get(id=pk)  # primary key
         object.estado = False
         object.save()
         return redirect('libro:listado_libros')

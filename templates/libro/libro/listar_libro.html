@@ -5,15 +5,14 @@ Biblioteca.dev | Listado de Libros
 {% endblock titulo %}
 
 {% block body %}
-<div>
-  <button class="btn btn-success" type="button" onclick="abrir_modal_creacion('{% url 'libro:crear_libro' %}')">
-    Crear Libro</button>
-</div>
-{% if libros %}
+
 <div class="card">
   <div class="card-header">
     <strong class="card-title">Listado de Libros</strong>
+    <button class="btn btn-success float-right" type="button" onclick="abrir_modal_creacion('{% url 'libro:crear_libro' %}')">
+      Crear Libro</button>
   </div>
+  {% if libros %}
   <div class="table-stats order-table ov-h">
     <table class="table">
       <thead>
@@ -46,10 +45,11 @@ Biblioteca.dev | Listado de Libros
       </tbody>
     </table>
   </div>
-</div>
-{% else %}
+  {% else %}
 <h1>No existen libros registrados</h1>
 {% endif %}
+</div>
+
 <!--MODAL-->
 <div class="modal fade" id="creacion" role="dialog">
 
