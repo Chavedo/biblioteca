@@ -37,13 +37,13 @@ class ListadoAutor(View):
 
         return self.model.objects.filter(estado=True)
 
-    def get_context_data(self):
+    def get_context_data(self, **kwargs):
         context = {}
         context['autores'] = self.get_queryset()
         context['form'] = self.form_class
         return context
 
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.get_context_data())
 
 
@@ -63,7 +63,7 @@ class EliminarAutor(DeleteView):
     Logic elimination of author, only the state is changed to false.
     It doesn't elminate it from db
     """
-    def post(pk):
+    def post(self,request,pk,*args,**kwargs):
         object = Autor.objects.get(id=pk)
         object.estado = False
         object.save()
@@ -91,7 +91,7 @@ class ListadoLibros(View):
 
         return self.model.objects.filter(estado=True)
 
-    def get_context_data(self):
+    def get_context_data(self,**kwargs):
         """
         Returns a dictionary representing the template context.
         The keyword arguments provided will make up the returned context. 
@@ -101,7 +101,7 @@ class ListadoLibros(View):
         context['form'] = self.form_class
         return context
 
-    def get(self, request):
+    def get(self, request,*args,**kwargs):
         return render(request, self.template_name, self.get_context_data())
 
 
@@ -111,16 +111,19 @@ class ActualizarLibro(UpdateView):
     template_name = 'libro/libro/libro.html'
     success_url = reverse_lazy('libro:listado_libros')
 
-    def get_context_data(**kwargs):
+    
+    def get_context_data(self,**kwargs):
         context = super().get_context_data(**kwargs)
         context["libros"] = Libro.objects.filter(estado=True)
         return context
+        
+        
 
 
 class EliminarLibro(DeleteView):
     model = Libro
 
-    def post(pk):
+    def post(self,request,pk,*args,**kwargs):
         object = Libro.objects.get(id=pk)  # primary key
         object.estado = False
         object.save()

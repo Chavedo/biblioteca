@@ -9,7 +9,8 @@ Biblioteca.dev | Listado de Libros
 <div class="card">
   <div class="card-header">
     <strong class="card-title">Listado de Libros</strong>
-    <button class="btn btn-success float-right" type="button" onclick="abrir_modal_creacion('{% url 'libro:crear_libro' %}')">
+    <button class="btn btn-success float-right" type="button"
+      onclick="abrir_modal(creacion,'{% url 'libro:crear_libro' %}')">
       Crear Libro</button>
   </div>
   {% if libros %}
@@ -36,7 +37,7 @@ Biblioteca.dev | Listado de Libros
           </td>
           <td>{{ libro.fecha_publicacion }}</td>
           <td>
-            <button onclick="abrir_modal_edicion('{% url 'libro:editar_libro' libro.id %}')"
+            <button onclick="abrir_modal(edicion,'{% url 'libro:editar_libro' libro.id %}')"
               class="btn btn-primary">Editar</button>
             <a href="{% url 'libro:eliminar_libro' libro.id %}" class="btn btn-danger">Eliminar</a>
           </td>
@@ -46,33 +47,17 @@ Biblioteca.dev | Listado de Libros
     </table>
   </div>
   {% else %}
-<h1>No existen libros registrados</h1>
-{% endif %}
+  <h1>No existen libros registrados</h1>
+  {% endif %}
 </div>
 
 <!--MODAL-->
-<div class="modal fade" id="creacion" role="dialog">
+<div class="modal" id="creacion" role="dialog">
 
 </div>
 
-<div class="modal fade" id="edicion" role="dialog">
+<div class="modal" id="edicion" role="dialog">
 
 </div>
 
 {% endblock body %}
-
-{% block extrajs %}
-<script type="text/javascript">
-  var $ = jQuery.noConflict();
-  function abrir_modal_edicion(url) {
-    $('#edicion').load(url, function () {
-      $(this).modal('show');
-    });
-  }
-  function abrir_modal_creacion(url) {
-    $('#creacion').load(url, function () {
-      $(this).modal('show');
-    });
-  }
-</script>
-{% endblock extrajs %}

@@ -1,20 +1,39 @@
 {% extends 'index.html' %}
 
+{% load static %}
+
 {% block titulo %}
 Biblioteca.dev | Listado de Usuarios
 {% endblock titulo %}
 
+{% block extra_css %}
+<link rel="stylesheet" type="text/css"
+  href="https://cdn.datatables.net/v/bs4/jq-3.3.1/jszip-2.5.0/dt-1.10.24/b-1.7.0/b-colvis-1.7.0/b-html5-1.7.0/b-print-1.7.0/r-2.2.7/sb-1.0.1/sp-1.2.2/datatables.min.css" />
+{% endblock extra_css %}
+
 {% block body %}
 
-{% if object_list %}
 <div class="card">
   <div class="card-header">
-    <strong class="card-title">Listado de Libros</strong>
+    <div class="row">
+      <div class="col-md-8">
+        <strong class="card-title">Listado de Usuarios</strong>
+      </div>
+      <div class="col-md-4">
+        <button type="button" class="btn btn-success float-right"
+          onclick="abrir_modal(creacion,'{% url 'usuario:crear_usuario' %}');">Crear Usuario
+        </button>
+        <a href=""></a>
+      </div>
+    </div>
+
+
   </div>
   <div class="table-stats order-table ov-h">
-    <table class="table">
+    <table id="tabla_usuarios" class="table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Legajo</th>
           <th>Nombre</th>
           <th>Apellido</th>
@@ -23,24 +42,29 @@ Biblioteca.dev | Listado de Usuarios
         </tr>
       </thead>
       <tbody>
-        {% for user in object_list %}
-        <tr>
-          <td>{{ user.username }}</td>
-          <td>{{ user.name }}</td>
-          <td>{{ user.last_name }}</td>
-          <td class="text-lowercase">{{ user.email }}</td>
-          <td>
-            <a href="#" class="btn btn-primary">Editar</a>
-            <a href="#" class="btn btn-danger">Eliminar</a>
-          </td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
   </div>
 </div>
-{% else %}
-<h1>No existen usuarios registrados</h1>
-{% endif %}
+
+<!--MODAL-->
+<div class="modal" id="creacion" role="dialog">
+
+</div>
+<div class="modal" id="edicion" role="dialog">
+
+</div>
+<div class="modal" id="eliminacion" role="dialog">
+
+</div>
+
 
 {% endblock body %}
+
+{% block extrajs %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script type="text/javascript"
+  src="https://cdn.datatables.net/v/bs4/jq-3.3.1/jszip-2.5.0/dt-1.10.24/b-1.7.0/b-colvis-1.7.0/b-html5-1.7.0/b-print-1.7.0/r-2.2.7/sb-1.0.1/sp-1.2.2/datatables.min.js"></script>
+<script src="{% static 'js/usuario/index.js' %}"></script>
+{% endblock extrajs %}  

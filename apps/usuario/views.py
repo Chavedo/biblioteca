@@ -1,6 +1,8 @@
 from django.contrib.auth import login, logout
-from django.http.response import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.core.serializers import serialize
+from django.http.response import (HttpResponse, HttpResponseRedirect,
+                                  JsonResponse)
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
@@ -40,31 +42,88 @@ def logout_usuario(request):
 
 class ListadoUsuario(ListView):
     model = Usuario
-    template_name = 'usuario/listar_usuario.html'
 
     def get_queryset(self):
         return self.model.objects.filter(is_active=True)
+
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            return HttpResponse(serialize('json', self.get_queryset()), 'application/json')
+        else:
+            return redirect('usuario:inicio_usuario')
 
 
 class RegistrarUsuario(CreateView):
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuario/crear_usuario.html'
-    success_url = reverse_lazy('usuario:listar_usuario')
 
-    def post(self,request,*args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            nuevo_usuario = Usuario(
-               email = form.cleaned_data.get('email'),
-               username = form.cleaned_data.get('username'),
-               name = form.cleaned_data.get('name'),
-               last_name = form.cleaned_data.get('last_name'),
-            )
-            nuevo_usuario.set_password(form.cleaned_data.get('password1'))
-            nuevo_usuario.save()
-            return redirect('usuario:listar_usuario')
+    # does the same as the method that is in Forms.py
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            form = self.form_class(request.POST)
+            if form.is_valid():
+                nuevo_usuario = Usuario(
+                    email=form.cleaned_data.get('email'),
+                    username=form.cleaned_data.get('username'),
+                    name=form.cleaned_data.get('name'),
+                    last_name=form.cleaned_data.get('last_name')
+                )
+                nuevo_usuario.set_password(form.cleaned_data.get('password1'))
+                nuevo_usuario.save()
+                mensaje = f'{self.model.__name__} registrado correctamente!'
+                error = 'No hay error!'
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 201
+                return response
+            else:
+                mensaje = f'{self.model.__name__} no se ha podido registrar!'
+                error = form.errors
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 400
+                return response
         else:
-            return render(request,self.template_name,{'form':form})
+            return redirect('usuario:inicio_usuario')
 
-            
+
+class EditarUsuario(UpdateView):
+    model = Usuario
+    form_class = FormularioUsuario
+    template_name = 'usuario/editar_usuario.html'
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            form = self.form_class(request.POST, instance=self.get_object())
+            if form.is_valid():
+                form.save()
+                mensaje = f'{self.model.__name__} actualizado correctamente!'
+                error = 'No hay error!'
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 201
+                return response
+            else:
+                mensaje = f'{self.model.__name__} no se ha podido actualizar!'
+                error = form.errors
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 400
+                return response
+        else:
+            return redirect('usuario:inicio_usuario')
+
+
+class EliminarUsuario(DeleteView):
+    model = Usuario
+    template_name = 'usuario/eliminar_usuario.html'
+
+    def delete(self, request, *args, **kwargs):
+        if request.is_ajax():
+            usuario = self.get_object()
+            usuario.is_active = False
+            usuario.save()
+            mensaje = f'{self.model.__name__} eliminado correctamente!'
+            error = 'No hay error!'
+            response = JsonResponse({'mensaje': mensaje, 'error': error})
+            response.status_code = 201
+            return response
+        else:
+            return redirect('usuario:inicio_usuario')

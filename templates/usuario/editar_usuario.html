@@ -1,15 +1,15 @@
 <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Creacion de Usuario</h2>
+            <h2 class="modal-title">Edición de Usuario: {{ object }}</h2>
             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <form id="form_creacion" action="{% url 'usuario:crear_usuario' %}" method="POST">
+        <form id="form_edicion" action="{% url 'usuario:actualizar_usuario' object.pk %}" method="POST">
             {% csrf_token %}
             <div class="modal-body">
-                <div id="errores">
+                <div id="erroresEdicion">
 
                 </div>
                 {{ form.as_p }}
@@ -17,7 +17,7 @@
             <div class="modal-footer">
                 <button class="btn btn-danger" type="button" data-dismiss="modal">Cancelar</button>
                 <button id="boton_creacion" class="btn btn-primary" type="button"
-                    onclick="registrar();">Confirmar</button>
+                    onclick="editar();">Confirmar</button>
             </div>
         </form>
     </div>

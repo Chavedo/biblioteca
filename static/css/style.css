@@ -454,7 +454,7 @@ canvas {
 .order-table {
   position: relative; }
   .order-table:after, .order-table:before {
-    content: "";
+    /*content: "";*/
     position: absolute;
     top: 0px;
     height: 37px;
@@ -2511,3 +2511,7 @@ footer.site-footer {
    min-height: 70vh;
 }
 /*# sourceMappingURL=style.css.map */
+
+.tableButton{
+  margin: 1px;
+}
