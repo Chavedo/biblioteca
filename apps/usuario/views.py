@@ -1,4 +1,5 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.serializers import serialize
 from django.http.response import (HttpResponse, HttpResponseRedirect,
                                   JsonResponse)
@@ -7,12 +8,21 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.views.generic import (CreateView, DeleteView, ListView,
+                                  TemplateView, UpdateView)
 from django.views.generic.edit import FormView
 
+from apps.usuario.mixins import LoginYSuperUsuarioMixin
 from apps.usuario.models import Usuario
 
 from .forms import FormularioLogin, FormularioUsuario
+
+
+class Inicio(LoginYSuperUsuarioMixin,TemplateView):
+    """
+    Render a template. Pass keyword arguments from the URLconf to the context.
+    """
+    template_name = "index.html"
 
 
 class Login(FormView):
@@ -39,8 +49,10 @@ def logout_usuario(request):
     logout(request)
     return HttpResponseRedirect('/accounts/login/')
 
+class InicioUsuario(LoginYSuperUsuarioMixin,TemplateView):
+    template_name='usuario/listar_usuario.html'
 
-class ListadoUsuario(ListView):
+class ListadoUsuario(LoginYSuperUsuarioMixin,ListView):
     model = Usuario
 
     def get_queryset(self):
@@ -53,7 +65,7 @@ class ListadoUsuario(ListView):
             return redirect('usuario:inicio_usuario')
 
 
-class RegistrarUsuario(CreateView):
+class RegistrarUsuario(LoginYSuperUsuarioMixin,CreateView):
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuario/crear_usuario.html'
@@ -86,7 +98,7 @@ class RegistrarUsuario(CreateView):
             return redirect('usuario:inicio_usuario')
 
 
-class EditarUsuario(UpdateView):
+class EditarUsuario(LoginYSuperUsuarioMixin,UpdateView):
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuario/editar_usuario.html'
@@ -111,7 +123,7 @@ class EditarUsuario(UpdateView):
             return redirect('usuario:inicio_usuario')
 
 
-class EliminarUsuario(DeleteView):
+class EliminarUsuario(LoginYSuperUsuarioMixin,DeleteView):
     model = Usuario
     template_name = 'usuario/eliminar_usuario.html'
 
