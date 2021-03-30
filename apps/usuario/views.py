@@ -1,5 +1,5 @@
 from django.contrib.auth import login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.serializers import serialize
 from django.http.response import (HttpResponse, HttpResponseRedirect,
                                   JsonResponse)
@@ -12,13 +12,13 @@ from django.views.generic import (CreateView, DeleteView, ListView,
                                   TemplateView, UpdateView)
 from django.views.generic.edit import FormView
 
-from apps.usuario.mixins import LoginYSuperUsuarioMixin
+from apps.usuario.mixins import LoginYStaffUsuarioMixin, ValidarPermisosRequeridosUsuarioMixin
 from apps.usuario.models import Usuario
 
 from .forms import FormularioLogin, FormularioUsuario
 
 
-class Inicio(LoginYSuperUsuarioMixin,TemplateView):
+class Inicio(LoginRequiredMixin, TemplateView):
     """
     Render a template. Pass keyword arguments from the URLconf to the context.
     """
@@ -36,8 +36,10 @@ class Login(FormView):
     @method_decorator(never_cache)
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
+            # si esta logeado lo redirec al success=index
             return HttpResponseRedirect(self.get_success_url())
         else:
+            # no esta logeado, Login de nuevo
             return super(Login, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -49,10 +51,13 @@ def logout_usuario(request):
     logout(request)
     return HttpResponseRedirect('/accounts/login/')
 
-class InicioUsuario(LoginYSuperUsuarioMixin,TemplateView):
-    template_name='usuario/listar_usuario.html'
 
-class ListadoUsuario(LoginYSuperUsuarioMixin,ListView):
+class InicioUsuario(LoginYStaffUsuarioMixin, ValidarPermisosRequeridosUsuarioMixin, TemplateView):
+    
+    template_name = 'usuario/listar_usuario.html'
+
+
+class ListadoUsuario(LoginYStaffUsuarioMixin, ValidarPermisosRequeridosUsuarioMixin, ListView):
     model = Usuario
 
     def get_queryset(self):
@@ -65,7 +70,7 @@ class ListadoUsuario(LoginYSuperUsuarioMixin,ListView):
             return redirect('usuario:inicio_usuario')
 
 
-class RegistrarUsuario(LoginYSuperUsuarioMixin,CreateView):
+class RegistrarUsuario(LoginYStaffUsuarioMixin, ValidarPermisosRequeridosUsuarioMixin, CreateView):
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuario/crear_usuario.html'
@@ -98,7 +103,7 @@ class RegistrarUsuario(LoginYSuperUsuarioMixin,CreateView):
             return redirect('usuario:inicio_usuario')
 
 
-class EditarUsuario(LoginYSuperUsuarioMixin,UpdateView):
+class EditarUsuario(LoginYStaffUsuarioMixin, ValidarPermisosRequeridosUsuarioMixin, UpdateView):
     model = Usuario
     form_class = FormularioUsuario
     template_name = 'usuario/editar_usuario.html'
@@ -123,7 +128,7 @@ class EditarUsuario(LoginYSuperUsuarioMixin,UpdateView):
             return redirect('usuario:inicio_usuario')
 
 
-class EliminarUsuario(LoginYSuperUsuarioMixin,DeleteView):
+class EliminarUsuario(LoginYStaffUsuarioMixin, ValidarPermisosRequeridosUsuarioMixin, DeleteView):
     model = Usuario
     template_name = 'usuario/eliminar_usuario.html'
 
