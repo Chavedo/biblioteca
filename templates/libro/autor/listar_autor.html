@@ -1,60 +1,65 @@
 {% extends 'index.html' %}
 
+{% load static %}
+
 {% block titulo %}
 Biblioteca.dev | Listado de Autores
 {% endblock titulo %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+{% endblock extra_css %}
 
 {% block body %}
 
 <div class="card">
   <div class="card-header">
-    <strong class="card-title">Listado de Autores</strong>
-    <button class="btn btn-success float-right" type="button"
-      onclick="abrir_modal(creacion,'{% url 'libro:crear_autor' %}')">
-      Crear Autor</button>
+    <div class="row">
+      <div class="col-md-8">
+        <strong class="card-title">Listado de Autores</strong>
+      </div>
+      <div class="col-md-4">
+        <button type="button" class="btn btn-success float-right"
+          onclick="abrir_modal(creacion,'{% url 'libro:crear_autor' %}');">Crear Autor
+        </button>
+        <a href=""></a>
+      </div>
+    </div>
+
+
   </div>
-  {% if autores %}
   <div class="table-stats order-table ov-h">
-    <table class="table">
+    <table id="tabla_autores" class="table">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Nombres</th>
-          <th>Apellidos</th>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
           <th>Nacionalidad</th>
           <th>Opciones</th>
         </tr>
       </thead>
       <tbody>
-        {% for autor in autores %}
-        <tr>
-          <td>{{ autor.id }}</td>
-          <td>{{ autor.nombre }}</td>
-          <td>{{ autor.apellido }}</td>
-          <td>{{ autor.nacionalidad }}</td>
-          <td>
-            <button onclick="abrir_modal(edicion,'{% url 'libro:editar_autor' autor.id %}')"
-              class="btn btn-primary">Editar</button>
-            <a href="{% url 'libro:eliminar_autor' autor.id %}" class="btn btn-danger">Eliminar</a>
-          </td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
   </div>
-  {% else %}
-  <h1>No existen autores registrados</h1>
-  {% endif %}
 </div>
-
 
 <!--MODAL-->
 <div class="modal" id="creacion" role="dialog">
 
 </div>
-
 <div class="modal" id="edicion" role="dialog">
 
 </div>
+<div class="modal" id="eliminacion" role="dialog">
+
+</div>
+
 
 {% endblock body %}
+
+{% block extrajs %}
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+<script src="{% static 'js/libro/autor.js' %}"></script>
+{% endblock extrajs %}  

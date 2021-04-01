@@ -1,3 +1,6 @@
+from django.core.serializers import serialize
+from django.http import response
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, ListView,
@@ -6,18 +9,11 @@ from django.views.generic import (CreateView, DeleteView, ListView,
 from .forms import AutorForm, LibroForm
 from .models import Autor, Libro
 
+class InicioAutor(TemplateView):
+    
+    template_name = "libro/autor/listar_autor.html"
 
-class CrearAutor(CreateView):
-    """
-    View for creating a new object, with a response rendered by a template.
-    """
-    model = Autor
-    form_class = AutorForm
-    template_name = 'libro/autor/crear_autor.html'
-    success_url = reverse_lazy('libro:listar_autor')
-
-
-class ListadoAutor(View):
+class ListadoAutor(ListView):
     """
     Render some list of objects, set by `self.model` or `self.queryset`.
     `self.queryset` can actually be any iterable of items, not just a queryset.
@@ -29,7 +25,7 @@ class ListadoAutor(View):
     def get_queryset(self):
 
         return self.model.objects.filter(estado=True)
-
+    
     def get_context_data(self, **kwargs):
         context = {}
         context['autores'] = self.get_queryset()
@@ -37,31 +33,95 @@ class ListadoAutor(View):
         return context
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, self.get_context_data())
+        if request.is_ajax():
+            return HttpResponse(serialize('json', self.get_queryset()), 'application/json')
+        else:
+            return redirect('libro:inicio_autor')
 
 
-class ActualizarAutor(UpdateView):
+class CrearAutor(CreateView):
+    """
+    View for creating a new object, with a response rendered by a template.
+    """
+    model = Autor
+    form_class = AutorForm
+    template_name = 'libro/autor/crear_autor.html'
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            form = self.form_class(request.POST)
+            if form.is_valid():
+                nuevo_autor = Autor(
+                    nombre=form.cleaned_data.get('nombre'),
+                    apellido=form.cleaned_data.get('apellido'),
+                    nacionalidad=form.cleaned_data.get('nacionalidad')
+                )
+                nuevo_autor.save()
+                mensaje = f'{self.model.__name__} registrado correctamente!'
+                error = 'No hay error!'
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 201
+                return response
+            else:
+                mensaje = f'{self.model.__name__} no se ha podido registrar!'
+                error = form.errors
+                response = JsonResponse(
+                    {'mensaje': mensaje, 'error': error})
+                response.status_code = 400
+                return response
+        else:
+            return redirect('libro:listar_autor')
+
+
+class EditarAutor(UpdateView):
     """
     View for updating an object, with a response rendered by a template.
     """
     model = Autor
-    template_name = "libro/autor/autor.html"
     form_class = AutorForm
-    success_url = reverse_lazy('libro:listar_autor')
+    template_name = "libro/autor/editar_autor.html"
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            form = self.form_class(request.POST, instance=self.get_object())
+            if form.is_valid():
+                form.save()
+                mensaje = f'{self.model.__name__} actualizado correctamente!'
+                error = 'No hay error!'
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 201
+                return response
+            else:
+                mensaje = f'{self.model.__name__} no se ha podido actualizar!'
+                error = form.errors
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 400
+                return response
+        else:
+            return redirect('libro:listar_autor')
 
 
 class EliminarAutor(DeleteView):
-    model = Autor
+
     """
     Logic elimination of author, only the state is changed to false.
     It doesn't elminate it from db
     """
 
-    def post(self, request, pk, *args, **kwargs):
-        object = Autor.objects.get(id=pk)
-        object.estado = False
-        object.save()
-        return redirect('autor:listar_autor')
+    model = Autor
+
+    def delete(self, request, *args, **kwargs):
+        if request.is_ajax():
+            autor = self.get_object()
+            autor.estado = False
+            autor.save()
+            mensaje = f'{self.model.__name__} eliminado correctamente!'
+            error = 'No hay error!'
+            response = JsonResponse({'mensaje': mensaje, 'error': error})
+            response.status_code = 201
+            return response
+        else:
+            return redirect('libro:listar_autor')
 
 
 class CrearLibro(CreateView):

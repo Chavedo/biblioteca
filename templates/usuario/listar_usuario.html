@@ -7,8 +7,7 @@ Biblioteca.dev | Listado de Usuarios
 {% endblock titulo %}
 
 {% block extra_css %}
-<link rel="stylesheet" type="text/css"
-  href="https://cdn.datatables.net/v/bs4/jq-3.3.1/jszip-2.5.0/dt-1.10.24/b-1.7.0/b-colvis-1.7.0/b-html5-1.7.0/b-print-1.7.0/r-2.2.7/sb-1.0.1/sp-1.2.2/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
 {% endblock extra_css %}
 
 {% block body %}
@@ -62,9 +61,6 @@ Biblioteca.dev | Listado de Usuarios
 {% endblock body %}
 
 {% block extrajs %}
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-<script type="text/javascript"
-  src="https://cdn.datatables.net/v/bs4/jq-3.3.1/jszip-2.5.0/dt-1.10.24/b-1.7.0/b-colvis-1.7.0/b-html5-1.7.0/b-print-1.7.0/r-2.2.7/sb-1.0.1/sp-1.2.2/datatables.min.js"></script>
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
 <script src="{% static 'js/usuario/index.js' %}"></script>
-{% endblock extrajs %}  
+{% endblock extrajs %}

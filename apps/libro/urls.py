@@ -5,9 +5,10 @@ from .views import *
 
 
 urlpatterns = [
+    path("inicio_autor/", InicioAutor.as_view(), name="inicio_autor"),
     path('crear_autor/',login_required(CrearAutor.as_view()), name = 'crear_autor'),
     path('listar_autor/',login_required(ListadoAutor.as_view()), name = 'listar_autor'),
-    path('editar_autor/<int:pk>/',login_required(ActualizarAutor.as_view()), name = 'editar_autor'),
+    path('editar_autor/<int:pk>/',login_required(EditarAutor.as_view()), name = 'editar_autor'),
     path('eliminar_autor/<int:pk>/',login_required(EliminarAutor.as_view()), name = 'eliminar_autor'),
     #-- book urls --
     path('listas_libros/', login_required(ListadoLibros.as_view()), name = 'listado_libros'),
