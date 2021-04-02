@@ -36,6 +36,12 @@ class AutorForm(forms.ModelForm):
         }
         
 class LibroForm(forms.ModelForm):
+    
+    #para que no aparezcan autores que hemos eliminado, en la registracion de un libro
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['autor_id'].queryset = Autor.objects.filter(estado=True)
+
     class Meta:
         model = Libro
         fields = ('titulo','autor_id','fecha_publicacion')

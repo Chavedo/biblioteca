@@ -9,15 +9,14 @@ from django.views.generic import (CreateView, DeleteView, ListView,
 from .forms import AutorForm, LibroForm
 from .models import Autor, Libro
 
+
 class InicioAutor(TemplateView):
-    
+
     template_name = "libro/autor/listar_autor.html"
 
+
 class ListadoAutor(ListView):
-    """
-    Render some list of objects, set by `self.model` or `self.queryset`.
-    `self.queryset` can actually be any iterable of items, not just a queryset.
-    """
+
     model = Autor
     form_class = AutorForm
     template_name = 'libro/autor/listar_autor.html'
@@ -25,7 +24,7 @@ class ListadoAutor(ListView):
     def get_queryset(self):
 
         return self.model.objects.filter(estado=True)
-    
+
     def get_context_data(self, **kwargs):
         context = {}
         context['autores'] = self.get_queryset()
@@ -70,7 +69,7 @@ class CrearAutor(CreateView):
                 response.status_code = 400
                 return response
         else:
-            return redirect('libro:listar_autor')
+            return redirect('libro:inicio_autor')
 
 
 class EditarAutor(UpdateView):
@@ -98,7 +97,7 @@ class EditarAutor(UpdateView):
                 response.status_code = 400
                 return response
         else:
-            return redirect('libro:listar_autor')
+            return redirect('libro:inicio_autor')
 
 
 class EliminarAutor(DeleteView):
@@ -109,6 +108,7 @@ class EliminarAutor(DeleteView):
     """
 
     model = Autor
+    template_name = 'libro/autor/eliminar_autor.html'
 
     def delete(self, request, *args, **kwargs):
         if request.is_ajax():
@@ -121,22 +121,16 @@ class EliminarAutor(DeleteView):
             response.status_code = 201
             return response
         else:
-            return redirect('libro:listar_autor')
+            return redirect('libro:inicio_autor')
 
 
-class CrearLibro(CreateView):
-    # create book
-    model = Libro
-    form_class = LibroForm
-    template_name = 'libro/libro/crear_libro.html'
-    success_url = reverse_lazy('libro:listado_libros')
+class InicioLibro(TemplateView):
+
+    template_name = "libro/libro/listar_libro.html"
 
 
-class ListadoLibros(View):
-    """
-    Intentionally simple parent class for all views. Only implements
-    dispatch-by-method and simple sanity checking.
-    """
+class ListadoLibros(ListView):
+
     model = Libro
     form_class = LibroForm
     template_name = 'libro/libro/listar_libro.html'
@@ -156,26 +150,84 @@ class ListadoLibros(View):
         return context
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, self.get_context_data())
+        if request.is_ajax():
+            return HttpResponse(serialize('json', self.get_queryset(), use_natural_foreign_keys=True), 'application/json')
+        else:
+            return redirect('libro:inicio_libro')
 
 
-class ActualizarLibro(UpdateView):
+class CrearLibro(CreateView):
+    # create book
     model = Libro
     form_class = LibroForm
-    template_name = 'libro/libro/libro.html'
-    success_url = reverse_lazy('libro:listado_libros')
+    template_name = 'libro/libro/crear_libro.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["libros"] = Libro.objects.filter(estado=True)
-        return context
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            form = self.form_class(request.POST)
+            if form.is_valid():
+                nuevo_libro = Autor(
+                    titulo=form.cleaned_data.get('titulo'),
+                    fecha_publicacion=form.cleaned_data.get(
+                        'fecha_publicacion'),
+                    autor_id=form.cleaned_data.get('autor_id'),
+
+                )
+                nuevo_libro.save()
+                mensaje = f'{self.model.__name__} registrado correctamente!'
+                error = 'No hay error!'
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 201
+                return response
+            else:
+                mensaje = f'{self.model.__name__} no se ha podido registrar!'
+                error = form.errors
+                response = JsonResponse(
+                    {'mensaje': mensaje, 'error': error})
+                response.status_code = 400
+                return response
+        else:
+            return redirect('libro:inicio_libro')
+
+
+class EditarLibro(UpdateView):
+    model = Libro
+    form_class = LibroForm
+    template_name = 'libro/libro/editar_libro.html'
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            form = self.form_class(request.POST, instance=self.get_object())
+            if form.is_valid():
+                form.save()
+                mensaje = f'{self.model.__name__} actualizado correctamente!'
+                error = 'No hay error!'
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 201
+                return response
+            else:
+                mensaje = f'{self.model.__name__} no se ha podido actualizar!'
+                error = form.errors
+                response = JsonResponse({'mensaje': mensaje, 'error': error})
+                response.status_code = 400
+                return response
+        else:
+            return redirect('libro:inicio_libro')
 
 
 class EliminarLibro(DeleteView):
     model = Libro
+    template_name = 'libro/libro/eliminar_libro.html'
 
-    def post(self, request, pk, *args, **kwargs):
-        object = Libro.objects.get(id=pk)  # primary key
-        object.estado = False
-        object.save()
-        return redirect('libro:listado_libros')
+    def delete(self, request, *args, **kwargs):
+        if request.is_ajax():
+            libro = self.get_object()
+            libro.estado = False
+            libro.save()
+            mensaje = f'{self.model.__name__} eliminado correctamente!'
+            error = 'No hay error!'
+            response = JsonResponse({'mensaje': mensaje, 'error': error})
+            response.status_code = 201
+            return response
+        else:
+            return redirect('libro:inicio_autor')

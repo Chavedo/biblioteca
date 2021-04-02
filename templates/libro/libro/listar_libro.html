@@ -1,63 +1,65 @@
 {% extends 'index.html' %}
 
+{% load static %}
+
 {% block titulo %}
 Biblioteca.dev | Listado de Libros
 {% endblock titulo %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
+{% endblock extra_css %}
 
 {% block body %}
 
 <div class="card">
   <div class="card-header">
-    <strong class="card-title">Listado de Libros</strong>
-    <button class="btn btn-success float-right" type="button"
-      onclick="abrir_modal(creacion,'{% url 'libro:crear_libro' %}')">
-      Crear Libro</button>
+    <div class="row">
+      <div class="col-md-8">
+        <strong class="card-title">Listado de Libros</strong>
+      </div>
+      <div class="col-md-4">
+        <button type="button" class="btn btn-success float-right"
+          onclick="abrir_modal(creacion,'{% url 'libro:crear_libro' %}');">Crear Autor
+        </button>
+        <a href=""></a>
+      </div>
+    </div>
+
+
   </div>
-  {% if libros %}
   <div class="table-stats order-table ov-h">
-    <table class="table">
+    <table id="tabla_libros" class="table">
       <thead>
         <tr>
-          <th>ID</th>
+          <th>#</th>
           <th>Titulo</th>
           <th>Autor</th>
-          <th>Fecha de Publicación</th>
+          <th>Fecha Publicacion</th>
           <th>Opciones</th>
         </tr>
       </thead>
       <tbody>
-        {% for libro in libros %}
-        <tr>
-          <td>{{ libro.id }}</td>
-          <td>{{ libro.titulo }}</td>
-          <td>
-            {% for autor in libro.autor_id.all %}
-            <li>{{ autor.nombre }}&nbsp;{{autor.apellido}}</li>
-            {% endfor %}
-          </td>
-          <td>{{ libro.fecha_publicacion }}</td>
-          <td>
-            <button onclick="abrir_modal(edicion,'{% url 'libro:editar_libro' libro.id %}')"
-              class="btn btn-primary">Editar</button>
-            <a href="{% url 'libro:eliminar_libro' libro.id %}" class="btn btn-danger">Eliminar</a>
-          </td>
-        </tr>
-        {% endfor %}
       </tbody>
     </table>
   </div>
-  {% else %}
-  <h1>No existen libros registrados</h1>
-  {% endif %}
 </div>
 
 <!--MODAL-->
 <div class="modal" id="creacion" role="dialog">
 
 </div>
-
 <div class="modal" id="edicion" role="dialog">
 
 </div>
+<div class="modal" id="eliminacion" role="dialog">
+
+</div>
+
 
 {% endblock body %}
+
+{% block extrajs %}
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+<script src="{% static 'js/libro/libro.js' %}"></script>
+{% endblock extrajs %}  

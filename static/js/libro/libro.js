@@ -1,6 +1,6 @@
 function listadoLibros() {
     $.ajax({
-        url: "/libro/listado_libros/",
+        url: "/libro/listar_libro/",
         type: "get",
         dataType: "json",
         success: function (response) {
@@ -12,12 +12,12 @@ function listadoLibros() {
                 let fila = '<tr>';
                 fila += '<td>' + (i + 1) + '</td>';
                 fila += '<td>' + response[i]["fields"]['titulo'] + '</td>';
-                fila += '<td>' + response[i]["fields"]['fecha_publicacion'] + '</td>';
                 fila += '<td>' + response[i]["fields"]['autor_id'] + '</td>';
+                fila += '<td>' + response[i]["fields"]['fecha_publicacion'] + '</td>';
                 fila += '<td><button type = "button" class = "btn btn-primary btn-sm tableButton"';
-                fila += ' onclick = "abrir_modal_edicion(\'/libro/editar_libro/' + response[i]['pk'] + '/\');"> EDITAR </button>';
-                fila += '<button type = "button" class = "btn btn-danger tableButton  btn-sm" ';
-                fila += 'onclick = "abrir_modal_eliminacion(\'/libro/eliminar_libro/' + response[i]['pk'] + '/\');"> ELIMINAR </buttton></td>';
+                fila += ' onclick = "abrir_modal(edicion,\'/libro/editar_libro/' + response[i]['pk']+'/\');"> EDITAR </button>';
+                fila += '<button type = "button" class = "btn btn-danger tableButton  btn-sm"';
+                fila += 'onclick = "abrir_modal(eliminacion,\'/libro/eliminar_libro/' + response[i]['pk'] +'/\');"> ELIMINAR </buttton></td>';
                 fila += '</tr>';
                 $('#tabla_libros tbody').append(fila);
             }
@@ -58,7 +58,7 @@ function registrar() {
         success: function (response) {
             notificacionSuccess(response.mensaje);
             listadoLibros();
-            cerrar_modal_creacion();
+            cerrar_modal(creacion);
         },
         error: function (error) {
             notificacionError(error.responseJSON.mensaje);
@@ -76,7 +76,7 @@ function editar() {
         success: function (response) {
             notificacionSuccess(response.mensaje);
             listadoLibros();
-            cerrar_modal_edicion();
+            cerrar_modal(edicion);
         },
         error: function (error) {
             notificacionError(error.responseJSON.mensaje);
@@ -95,7 +95,7 @@ function eliminar(pk) {
         success: function (response) {
             notificacionSuccess(response.mensaje);
             listadoLibros();
-            cerrar_modal_eliminacion();
+            cerrar_modal(eliminacion);
         },
         error: function (error) {
             notificacionError(error.responseJSON.mensaje);
