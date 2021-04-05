@@ -12,7 +12,11 @@ function listadoLibros() {
                 let fila = '<tr>';
                 fila += '<td>' + (i + 1) + '</td>';
                 fila += '<td>' + response[i]["fields"]['titulo'] + '</td>';
-                fila += '<td>' + response[i]["fields"]['autor_id'] + '</td>';
+                if (response[i]["fields"]["autor_id"] == ''){
+                    fila += "<td>Desconociddo</td>";
+                }else{
+                    fila += '<td>' + response[i]["fields"]['autor_id'] + '</td>';
+                }
                 fila += '<td>' + response[i]["fields"]['fecha_publicacion'] + '</td>';
                 fila += '<td><button type = "button" class = "btn btn-primary btn-sm tableButton"';
                 fila += ' onclick = "abrir_modal(edicion,\'/libro/editar_libro/' + response[i]['pk']+'/\');"> EDITAR </button>';

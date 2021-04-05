@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 
 
 class Autor(models.Model):
@@ -10,7 +11,6 @@ class Autor(models.Model):
         'Fecha creacion', auto_now=True, auto_now_add=False)
     estado = models.BooleanField('Estado', default=True)
 
-    
 
     class Meta:
         ordering = ['nombre']
@@ -42,3 +42,23 @@ class Libro(models.Model):
 
     def __str__(self):
         return self.titulo
+
+
+def quitar_autor_libro(sender,instance,**kwargs):
+    #sender -> modelo al cual se va a enlazar
+    """Cuando elimino un autor, cambio el estado de los libros a false
+
+    Args:
+        sender (model): modelo a enlazar
+        instance ([type]): [description]
+    """
+    if instance.estado == False:
+        autor = instance.id
+        libros = Libro.objects.filter(autor_id=autor)
+        for libro in libros:
+            libro.estado = False
+            libro.save()
+        
+
+#enlaze de la funcion con el post_save
+post_save.connect(quitar_autor_libro,sender = Autor)
