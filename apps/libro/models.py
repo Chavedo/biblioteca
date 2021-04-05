@@ -43,9 +43,11 @@ class Libro(models.Model):
     def __str__(self):
         return self.titulo
 
+    #OBTENGO EL STR DE LOS AUTORES DEL LIBRO, PROBLEMAS CON M2M EN LIST_DISPLAY ADMIN.PY
+    def get_autor_id(self):
+        return "\n".join([p.__str__() for p in self.autor_id.all()])
 
 def quitar_autor_libro(sender,instance,**kwargs):
-    #sender -> modelo al cual se va a enlazar
     """Cuando elimino un autor, cambio el estado de los libros a false
 
     Args:

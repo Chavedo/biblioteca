@@ -26,7 +26,7 @@ class UsuarioManager(BaseUserManager):
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
     username = models.IntegerField(
-        'Legajo usuario', unique=True, validators=[MaxValueValidator(99999), MinValueValidator(1)])
+        'Legajo', unique=True, validators=[MaxValueValidator(99999), MinValueValidator(1)])
     email = models.EmailField('Email de usuario', max_length=254)
     name = models.CharField('Nombre', blank=True, max_length=50, null=True)
     last_name = models.CharField(
