@@ -164,7 +164,7 @@ class CrearLibro(CreateView):
 
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            form = self.form_class(request.POST)
+            form = self.form_class(data = request.POST,files = request.FILES,instance=self.get_object())
             if form.is_valid():
                 nuevo_libro = Autor(
                     titulo=form.cleaned_data.get('titulo'),

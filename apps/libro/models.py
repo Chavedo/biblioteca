@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import base
+from django.db.models.fields import TextField
 from django.db.models.signals import post_save
 
 
@@ -30,7 +32,11 @@ class Libro(models.Model):
         'Titulo', max_length=255, blank=False, null=False)
     fecha_publicacion = models.DateField(
         'Fecha de publicacion', blank=False, null=False)
+    descripcion = TextField('Descripción',null=True,blank=True)
+    cantidad = models.PositiveSmallIntegerField('Stock',default=1)
+    imagen = models.ImageField('Imagen', upload_to='libro/', max_length=255, null=True,blank=True)
     autor_id = models.ManyToManyField(Autor)
+    isbn = models.CharField('ISBN',blank=True,null=True,max_length=50)
     fecha_creacion = models.DateField(
         'Fecha creacion', auto_now=True, auto_now_add=False)
     estado = models.BooleanField(default = True, verbose_name = 'Estado')
