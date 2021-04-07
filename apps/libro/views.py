@@ -4,10 +4,13 @@ from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, ListView,
-                                  TemplateView, UpdateView, View)
+                                  TemplateView, UpdateView, View, DetailView)
+
+from apps.libro.mixins import LoginMixin
+from apps.libro.models import Autor, Libro, Reserva
+from apps.usuario.models import Usuario
 
 from .forms import AutorForm, LibroForm
-from .models import Autor, Libro
 
 
 class InicioAutor(TemplateView):
@@ -164,7 +167,8 @@ class CrearLibro(CreateView):
 
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            form = self.form_class(data = request.POST,files = request.FILES,instance=self.get_object())
+            form = self.form_class(
+                data=request.POST, files=request.FILES, instance=self.get_object())
             if form.is_valid():
                 nuevo_libro = Autor(
                     titulo=form.cleaned_data.get('titulo'),
@@ -231,3 +235,51 @@ class EliminarLibro(DeleteView):
             return response
         else:
             return redirect('libro:inicio_autor')
+
+
+class ListadoLibrosUsuarios(LoginMixin, ListView):
+    model = Libro
+    paginate_by = 6
+    template_name = 'libro/libros_disponibles.html'
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(
+            estado=True, cantidad__gte=1)  # <=
+        return queryset
+
+
+class DetalleLibroUsuarios(LoginMixin, DetailView):
+    model = Libro
+    template_name = 'libro/detalle_libro_disponible.html'
+
+
+class RegistrarReserva(LoginMixin, CreateView):
+    model = Reserva
+    success_url = reverse_lazy('libro:listar_libros_reservados')
+
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            libro = Libro.objects.filter(id=request.POST.get('libro')).first()
+            usuario = Usuario.objects.filter(
+                id=request.POST.get('usuario')).first()
+            if libro:
+                nueva_reserva = self.model(
+                    libro=libro,
+                    usuario=usuario
+                )
+                nueva_reserva.save()
+                mensaje = f'{self.model.__name__} registrado correctamente!'
+                error = 'No hay error!'
+                response = JsonResponse({'mensaje':mensaje,'error':error,'url':self.success_url})
+                response.status_code = 201
+                return response
+            return redirect('libro:listar_libros_disponibles')
+
+class ListadoLibrosReservados(LoginMixin,ListView):
+    model = Reserva
+    paginate_by = 6
+    template_name = 'libro/libros_reservados.html'
+
+    def get_queryset(self):
+        queryset = self.model.objects.filter(estado=True,usuario=self.request.user.id)
+        return queryset

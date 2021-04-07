@@ -1,5 +1,5 @@
 from django import forms
-from .models import Autor, Libro
+from .models import Autor, Libro, Reserva
 
 
 class AutorForm(forms.ModelForm):
@@ -66,3 +66,8 @@ class LibroForm(forms.ModelForm):
                 years=range(1800,2022) #Non-defined range (current - current + 9)
             )
         }
+
+class ReservaForm(forms.ModelForm):
+    class Meta:
+        model = Reserva
+        exclude = ('usuario',)

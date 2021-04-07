@@ -2,9 +2,7 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import path
 
-from .views import (CrearAutor, CrearLibro, EditarAutor, EditarLibro,
-                    EliminarAutor, EliminarLibro, InicioAutor, InicioLibro,
-                    ListadoAutor, ListadoLibros)
+from .views import *
 
 urlpatterns = [
     #-- AUTOR --
@@ -18,7 +16,12 @@ urlpatterns = [
     path('listar_libro/', login_required(ListadoLibros.as_view()), name = 'listar_libro'),
     path('crear_libro/', login_required(CrearLibro.as_view()), name = 'crear_libro'),
     path('editar_libro/<int:pk>/', login_required(EditarLibro.as_view()), name = 'editar_libro'),
-    path('eliminar_libro/<int:pk>/', login_required(EliminarLibro.as_view()), name = 'eliminar_libro')
+    path('eliminar_libro/<int:pk>/', login_required(EliminarLibro.as_view()), name = 'eliminar_libro'),
+    #-- USER URLS --
+    path('listar-libros-disponibles/',ListadoLibrosUsuarios.as_view(), name = 'listar_libros_disponibles'),
+    path('listar-libros-reservados/',ListadoLibrosReservados.as_view(), name = 'listar_libros_reservados'),
+    path('detalle-libro/<int:pk>/',DetalleLibroUsuarios.as_view(), name = 'detalle_libro'),
+    path('reservar-libro/',RegistrarReserva.as_view(), name = 'reservar_libro')
 ]
 
 

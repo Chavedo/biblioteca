@@ -32,7 +32,11 @@ def libro_create(cant):
     for _ in range(cant):
         nuevo_libro = Libro(  
             titulo = libro.sentence(nb_words=4,variable_nb_words=True ),
-            fecha_publicacion = libro.date(pattern='%Y-%m-%d',end_datetime=None)
+            fecha_publicacion = libro.date(pattern='%Y-%m-%d',end_datetime=None),
+            descripcion = libro.paragraph(nb_sentences=10),
+            imagen = 'libro/book.jpg',
+            cantidad = libro.pyint(min_value=1,max_value=3,step=1),
+            isbn = libro.isbn10()
         )
         nuevo_libro.save()
         nuevo_libro.autor_id.add(random_id_autor())
