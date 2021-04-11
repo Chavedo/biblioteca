@@ -1,60 +1,45 @@
 {% extends 'index.html' %}
+
 {% load static %}
+
 {% block titulo %}
 Biblioteca.dev | Listado de Libros Reservados
 {% endblock titulo %}
+
 {% block extra_css %}
+<link rel="stylesheet" type="text/css" href="{% static 'DataTables/datatables.min.css' %}"/>
 {% endblock extra_css %}
+
 {% block body %}
 <div class="card">
     <div class="card-header">
-        <div class="row" style="margin: 30px;">
-            <div class="col-md-12 text-center ">
-                <strong class="card-title">
-                    <h2>Listado de Libros Reservados</h2>
-                </strong>
-            </div>
+      <div class="row">
+        <div class="col-md-8">
+          <strong class="card-title">Mis reservas</strong>
         </div>
-
-        <div class="container">
-            <div class="row">
-                {% for reserva in object_list %}
-                <div class="col-md-4">
-                    <a href="{% url 'libro:detalle_libro' reserva.libro.id %}">
-                        <div class="card">
-                            <img class="card-img-top" src="{{ reserva.libro.imagen.url }}" alt="Card image cap">
-                            <div class="card-body">
-                                <h4 class="card-title mb-3">{{ reserva.libro.titulo }}</h4>
-                                <p class="card-text">Reservado el {{ reserva.fecha_creacion }}</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="pagination">
-            <span class="step-links">
-                {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; Primera</a>
-                <a href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-                {% endif %}
-
-                <span class="current">
-                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
-                </span>
-
-                {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
+      </div>
     </div>
+<div class="table-stats order-table ov-h">
+  <table id="tabla_libros" class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Libro - Autor</th>
+        <th>Fecha Reserva</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
 </div>
+</div>
+
+<!--MODAL-->
+<div class="detalle" id="creacion" role="dialog">
 
 
 {% endblock body %}
 {% block extrajs %}
+<script type="text/javascript" src="{% static 'DataTables/datatables.min.js' %}"></script>
+<script src="{% static 'js/libro/reserva.js' %}"></script>
 {% endblock extrajs %}

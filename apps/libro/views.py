@@ -237,20 +237,57 @@ class EliminarLibro(DeleteView):
             return redirect('libro:inicio_autor')
 
 
-class ListadoLibrosUsuarios(LoginMixin, ListView):
+class ListadoLibrosDisponibles(LoginMixin,ListView):
     model = Libro
     paginate_by = 6
     template_name = 'libro/libros_disponibles.html'
 
     def get_queryset(self):
-        queryset = self.model.objects.filter(
-            estado=True, cantidad__gte=1)  # <=
+        queryset = self.model.objects.filter(estado = True,cantidad__gte = 1)
         return queryset
 
+class ListadoLibrosReservados(LoginMixin,TemplateView):
+    template_name = 'libro/libros_reservados.html'
 
-class DetalleLibroUsuarios(LoginMixin, DetailView):
+
+class Reservas(LoginMixin,ListView):
+    model = Reserva
+
+    def get_queryset(self):
+        return self.model.objects.filter(estado = True,usuario = self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            return HttpResponse(serialize('json', self.get_queryset(),use_natural_foreign_keys = True), 'application/json')
+        else:
+            return redirect('libro:listar_libros_reservados')
+
+
+class ListadoReservasVencidas(LoginMixin,TemplateView):
+    template_name = 'libro/reservas_vencidas.html'
+
+
+class ReservasVencidas(LoginMixin,ListView):
+    model = Reserva
+
+    def get_queryset(self):
+        return self.model.objects.filter(estado = False,usuario = self.request.user)
+
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            return HttpResponse(serialize('json', self.get_queryset(),use_natural_foreign_keys = True), 'application/json')
+        else:
+            return redirect('libro:listar_reservas_vencidas')
+
+class DetalleLibroDisponible(LoginMixin,DetailView):
     model = Libro
     template_name = 'libro/detalle_libro_disponible.html'
+
+    def get(self,request,*agrs,**kwargs):
+        if self.get_object().cantidad > 0:
+            return render(request,self.template_name,{'object':self.get_object()})
+        return redirect('libro:listar_libros_disponibles')
+
 
 
 class RegistrarReserva(LoginMixin, CreateView):
@@ -262,24 +299,20 @@ class RegistrarReserva(LoginMixin, CreateView):
             libro = Libro.objects.filter(id=request.POST.get('libro')).first()
             usuario = Usuario.objects.filter(
                 id=request.POST.get('usuario')).first()
-            if libro:
-                nueva_reserva = self.model(
-                    libro=libro,
-                    usuario=usuario
-                )
-                nueva_reserva.save()
-                mensaje = f'{self.model.__name__} registrado correctamente!'
-                error = 'No hay error!'
-                response = JsonResponse({'mensaje':mensaje,'error':error,'url':self.success_url})
-                response.status_code = 201
-                return response
+            if libro and usuario:
+                if libro.cantidad > 0:
+                    nueva_reserva = self.model(
+                        libro=libro,
+                        usuario=usuario
+                    )
+                    nueva_reserva.save()
+                    mensaje = f'{self.model.__name__} registrado correctamente!'
+                    error = 'No hay error!'
+                    response = JsonResponse(
+                        {'mensaje': mensaje, 'error': error, 'url': self.success_url})
+                    response.status_code = 201
+                    return response
+
             return redirect('libro:listar_libros_disponibles')
 
-class ListadoLibrosReservados(LoginMixin,ListView):
-    model = Reserva
-    paginate_by = 6
-    template_name = 'libro/libros_reservados.html'
 
-    def get_queryset(self):
-        queryset = self.model.objects.filter(estado=True,usuario=self.request.user.id)
-        return queryset

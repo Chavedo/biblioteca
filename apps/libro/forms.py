@@ -1,5 +1,7 @@
 from django import forms
+from django.db.models import fields
 from .models import Autor, Libro, Reserva
+from django.core.validators import ValidationError
 
 
 class AutorForm(forms.ModelForm):
@@ -68,6 +70,12 @@ class LibroForm(forms.ModelForm):
         }
 
 class ReservaForm(forms.ModelForm):
-    class Meta:
-        model = Reserva
-        exclude = ('usuario',)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        #self.fields['libro'].queryset = Libro.objects.filter(estado=True,cantidad__gte=1)
+
+    def clean_libro(self):
+        libro = self.cleaned_data['libro']
+        if libro.cantidad < 1:
+            raise ValidationError('No se puede reservar este libro, sin unidades disponibles.')
+        return libro

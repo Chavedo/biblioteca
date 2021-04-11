@@ -2,7 +2,8 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Autor, Libro
+from .models import Autor, Libro, Reserva
+from .forms import ReservaForm
 
 class AutorResource(resources.ModelResource):
     class Meta:
@@ -52,5 +53,11 @@ class LibroAdmin(ImportExportModelAdmin,admin.ModelAdmin):
             libro.estado = True
             libro.save()
 
+class ReservaAdmin(admin.ModelAdmin):
+    form = ReservaForm
+    list_display = ('libro','usuario','fecha_creacion','estado')
+    
+
 admin.site.register(Autor,AutorAdmin)
 admin.site.register(Libro, LibroAdmin)
+admin.site.register(Reserva, ReservaAdmin)

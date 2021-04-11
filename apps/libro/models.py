@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import base
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import TextField
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from apps.usuario.models import Usuario
 
 
@@ -56,11 +56,14 @@ class Libro(models.Model):
     def get_autor_id(self):
         return "\n".join([p.__str__() for p in self.autor_id.all()])
 
-    #funcion del pibe
+    #funcion del pibe- no la uso nunca
     def obtener_autores(self):
         autores = str([autor for autor in self.autor_id.all().values_list('nombre',flat=True)])
         autores = autores.replace("[","").replace("]","").replace("'","")
         return autores
+
+    def natural_key(self):
+        return f'{self.titulo} - {self.get_autor_id()}'
 
 def quitar_autor_libro(sender, instance, **kwargs):
     """Cuando elimino un autor, cambio el estado de los libros a false
@@ -109,4 +112,10 @@ def reducir_cantidad_libro(sender,instance,**kwargs):
         libro.cantidad = libro.cantidad - 1
         libro.save()
 
+def validar_creacion_reserva(sender,instance,**kwargs):
+    libro = instance.libro
+    if libro.cantidad < 1:
+        raise Exception('No se puedo realizar la reservar')
+
 post_save.connect(reducir_cantidad_libro,sender = Reserva)
+#pre_save.connect(validar_creacion_reserva,sender = Reserva)

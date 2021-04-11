@@ -18,9 +18,12 @@ urlpatterns = [
     path('editar_libro/<int:pk>/', login_required(EditarLibro.as_view()), name = 'editar_libro'),
     path('eliminar_libro/<int:pk>/', login_required(EliminarLibro.as_view()), name = 'eliminar_libro'),
     #-- USER URLS --
-    path('listar-libros-disponibles/',ListadoLibrosUsuarios.as_view(), name = 'listar_libros_disponibles'),
+    path('reservas/',Reservas.as_view(), name = 'reservas'),
+    path('reservas-vencidas/',ReservasVencidas.as_view(), name = 'reservas_vencidas'),
+    path('listar-libros-disponibles/',ListadoLibrosDisponibles.as_view(), name = 'listar_libros_disponibles'),
     path('listar-libros-reservados/',ListadoLibrosReservados.as_view(), name = 'listar_libros_reservados'),
-    path('detalle-libro/<int:pk>/',DetalleLibroUsuarios.as_view(), name = 'detalle_libro'),
+    path('listar-reservas-vencidas/',ListadoReservasVencidas.as_view(), name = 'listar_reservas_vencidas'),
+    path('detalle-libro/<int:pk>/',DetalleLibroDisponible.as_view(), name = 'detalle_libro'),
     path('reservar-libro/',RegistrarReserva.as_view(), name = 'reservar_libro')
 ]
 

@@ -24,8 +24,9 @@ Biblioteca.dev | Listado de Libros Disponibles
                         <div class="card">
                             <img class="card-img-top" src="{{ libro.imagen.url }}" alt="Card image cap">
                             <div class="card-body">
-                                <h4 class="card-title mb-3">{{ libro.titulo }}</h4>
-                                <p class="card-text">{{ libro.descripcion }}</p>
+                                <h4 class="card-title mb-3 text-dark"><strong>{{ libro.titulo }}</strong></h4>
+                                <h4 class="card-title mb-3 text-dark"><strong>Autor:</strong> {{ libro.get_autor_id }}</h4>
+                                <p class="card-text" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">{{ libro.descripcion }}</p>
                             </div>
                         </div>
                     </a>
@@ -34,7 +35,7 @@ Biblioteca.dev | Listado de Libros Disponibles
             </div>
         </div>
 
-        <div class="pagination">
+        <div class="pagination  float-right">
             <span class="step-links">
                 {% if page_obj.has_previous %}
                 <a href="?page=1">&laquo; Primera</a>
