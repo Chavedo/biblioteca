@@ -18,3 +18,5 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+STATICFILES_DIRS = (BASE_DIR, 'static')
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')

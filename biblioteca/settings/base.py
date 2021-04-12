@@ -60,6 +60,8 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'biblioteca.wsgi.application'
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
@@ -83,7 +85,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'usuario.Usuario'
 
-WSGI_APPLICATION = 'biblioteca.wsgi.application'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
