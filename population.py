@@ -1,7 +1,7 @@
 import os
 import django,random
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE","biblioteca.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE","biblioteca.settings.production")
 
 django.setup()
 
