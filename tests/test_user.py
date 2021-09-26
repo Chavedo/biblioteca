@@ -1,6 +1,7 @@
+from django.http import response
 import pytest
 
-from django.test import TestCase
+from django.test import TestCase, Client
 
 from apps.usuario.models import Usuario
 from tests.factories import UsuarioFactory, UsuarioAdminFactory
@@ -45,13 +46,35 @@ def test_user_creation_fail():
 class UsuarioTestCase(TestCase):
 
     def setUp(self):
+        self.client = Client()
         self.common_user = UsuarioFactory.create()
         self.superuser = UsuarioAdminFactory.create()
 
     def test_common_user_creation(self):
-        self.assertEqual(self.common_user.is_active,True)
-        self.assertEqual(self.common_user.is_staff,False)
-        self.assertEqual(self.common_user.is_superuser,False)
+        self.assertEqual(self.common_user.is_active, True)
+        self.assertEqual(self.common_user.is_staff, False)
+        self.assertEqual(self.common_user.is_superuser, False)
 
     def test_superuser_creation(self):
         self.assertEqual(self.superuser.is_staff, True)
+
+    def test_login(self):
+        self.common_user.set_password('qweasd')
+        self.common_user.save()
+        response = self.client.login(username='42966', password='qweasd')
+        self.assertEqual(response, True)
+
+    def test_login_fail(self):
+        self.common_user.set_password('qweasd')
+        self.common_user.save()
+        response = self.client.login(username='42966', password='qweasd2')
+        self.assertEqual(response, False)
+
+    def test_user_list(self):
+        self.superuser.set_password('qweasd')
+        self.superuser.save()
+        self.client.login(username='12345', password='qweasd')
+        response = self.client.get(
+            '/usuario/listar_usuario/', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 1)

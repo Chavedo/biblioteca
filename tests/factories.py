@@ -14,8 +14,8 @@ class UsuarioFactory(factory.Factory):
     class Meta:
         model = Usuario
 
-    name = fake.name()
-    username = fake.username()
+    name = 'mariano'
+    username = '42966'
     email = fake.email()
     is_staff = False
 
