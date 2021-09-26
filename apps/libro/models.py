@@ -11,8 +11,7 @@ class Autor(models.Model):
     nombre = models.CharField(max_length=200, blank=False, null=False)
     apellido = models.CharField(max_length=220, blank=False, null=False)
     nacionalidad = models.CharField(max_length=100, blank=False, null=False)
-    fecha_creacion = models.DateField(
-        'Fecha creacion', auto_now=True, auto_now_add=False)
+    fecha_creacion = models.DateField('Fecha creacion', auto_now=True, auto_now_add=False)
     estado = models.BooleanField('Estado', default=True)
 
     class Meta:
@@ -30,18 +29,14 @@ class Autor(models.Model):
 
 class Libro(models.Model):
     id = models.AutoField(primary_key=True)
-    titulo = models.CharField(
-        'Titulo', max_length=255, blank=False, null=False)
-    fecha_publicacion = models.DateField(
-        'Fecha de publicacion', blank=False, null=False)
+    titulo = models.CharField('Titulo', max_length=255, blank=False, null=False)
+    fecha_publicacion = models.DateField('Fecha de publicacion', blank=False, null=False)
     descripcion = TextField('Descripción', null=True, blank=True)
     cantidad = models.PositiveIntegerField('Stock', default=1)
-    imagen = models.ImageField(
-        'Imagen', upload_to='libro/', max_length=255, null=True, blank=True)
-    autor_id = models.ManyToManyField(Autor)
+    imagen = models.ImageField('Imagen', upload_to='libro/', max_length=255, null=True, blank=True)
+    autor_id = models.ManyToManyField(Autor) #! el _id no se pone
     isbn = models.CharField('ISBN', blank=True, null=True, max_length=50)
-    fecha_creacion = models.DateField(
-        'Fecha creacion', auto_now=True, auto_now_add=False)
+    fecha_creacion = models.DateField('Fecha creacion', auto_now=True, auto_now_add=False)
     estado = models.BooleanField(default=True, verbose_name='Estado')
 
     class Meta:
